@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (c) 2026 franticplant
 package juloo.keyboard2.macros;
 
 import android.content.ClipData;
@@ -298,19 +300,27 @@ public final class MacroStore
 
   String clipboard_text()
   {
-    ClipboardManager cm = (ClipboardManager)
-      _context.getSystemService(Context.CLIPBOARD_SERVICE);
-    if (cm == null || !cm.hasPrimaryClip())
+    try
+    {
+      ClipboardManager cm = (ClipboardManager)
+        _context.getSystemService(Context.CLIPBOARD_SERVICE);
+      if (cm == null || !cm.hasPrimaryClip())
+        return "";
+      ClipData clip = cm.getPrimaryClip();
+      if (clip == null || clip.getItemCount() == 0)
+        return "";
+      CharSequence text = clip.getItemAt(0).coerceToText(_context);
+      if (text == null)
+        return "";
+      String s = text.toString();
+      // Avoid committing a huge clipboard by accident.
+      return s.length() > 8192 ? s.substring(0, 8192) : s;
+    }
+    catch (Exception _e)
+    {
+      // Clipboard access can be denied when the IME is not focused.
       return "";
-    ClipData clip = cm.getPrimaryClip();
-    if (clip == null || clip.getItemCount() == 0)
-      return "";
-    CharSequence text = clip.getItemAt(0).coerceToText(_context);
-    if (text == null)
-      return "";
-    String s = text.toString();
-    // Avoid committing a huge clipboard by accident.
-    return s.length() > 8192 ? s.substring(0, 8192) : s;
+    }
   }
 
   static String read_file(File file) throws Exception

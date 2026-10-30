@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+// Copyright (c) 2026 franticplant
 package juloo.keyboard2.macros;
 
 import java.util.Arrays;
