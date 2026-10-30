@@ -1,11 +1,14 @@
 package juloo.keyboard2;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import juloo.keyboard2.macros.MacroEditorActivity;
 
 public class SettingsActivity extends PreferenceActivity
 {
@@ -31,6 +34,16 @@ public class SettingsActivity extends PreferenceActivity
     findPreference("horizontal_margin_landscape_unfolded").setEnabled(foldableDevice);
     findPreference("keyboard_height_unfolded").setEnabled(foldableDevice);
     findPreference("keyboard_height_landscape_unfolded").setEnabled(foldableDevice);
+
+    findPreference("macros_editor").setOnPreferenceClickListener(
+        new Preference.OnPreferenceClickListener() {
+          public boolean onPreferenceClick(Preference preference)
+          {
+            startActivity(new Intent(SettingsActivity.this,
+                  MacroEditorActivity.class));
+            return true;
+          }
+        });
   }
 
   void fallbackEncrypted()

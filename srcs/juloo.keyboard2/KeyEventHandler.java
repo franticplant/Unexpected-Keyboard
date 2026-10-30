@@ -9,6 +9,8 @@ import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
 import java.util.Iterator;
+import juloo.keyboard2.macros.MacroEntry;
+import juloo.keyboard2.macros.MacroStore;
 import juloo.keyboard2.suggestions.Suggestions;
 
 public final class KeyEventHandler
@@ -112,7 +114,12 @@ public final class KeyEventHandler
       case Char: send_text(String.valueOf(key.getChar())); break;
       case String: send_text(key.getString()); break;
       case Event: _recv.handle_event_key(key.getEvent()); break;
-      case Keyevent: send_key_down_up(key.getKeyevent()); break;
+      case Keyevent:
+        if (key.getKeyevent() == KeyEvent.KEYCODE_ENTER
+            || key.getKeyevent() == KeyEvent.KEYCODE_TAB)
+          try_expand_macro("");
+        send_key_down_up(key.getKeyevent());
+        break;
       case Modifier: break;
       case Editing: handle_editing_key(key.getEditing()); break;
       case Compose_pending: _recv.set_compose_pending(true); break;
@@ -551,9 +558,55 @@ public final class KeyEventHandler
       backspace. */
   int last_replacement_word_len = 0;
 
+  /** Look for a snippet trigger at the end of the text before the cursor and
+      replace it. Returns [true] when something was expanded. */
+  boolean try_expand_macro(String after)
+  {
+    MacroStore store = MacroStore.get();
+    if (store == null || !store.has_entries()
+        || !_config.editor_config.snippets_enabled)
+      return false;
+    InputConnection conn = _recv.getCurrentInputConnection();
+    if (conn == null)
+      return false;
+    String before;
+    try
+    {
+      int len = Math.max(store.max_trigger_length() + 4, 16);
+      CharSequence cs = conn.getTextBeforeCursor(len, 0);
+      if (cs == null)
+        return false;
+      before = cs.toString();
+    }
+    catch (Exception _e)
+    {
+      return false;
+    }
+    String package_name = _config.editor_config.package_name;
+    MacroEntry entry = store.match(package_name, before);
+    if (entry == null)
+      return false;
+    if (entry.is_text())
+    {
+      String expansion = store.expand(entry.text, package_name);
+      replace_surrounding_text(entry.trigger.length(), 0,
+          expansion + (entry.append_delimiter ? after : ""));
+    }
+    else
+    {
+      replace_surrounding_text(entry.trigger.length(), 0, "");
+      evaluate_macro(entry.keys);
+      if (entry.append_delimiter && after.length() > 0)
+        send_text(after);
+    }
+    return true;
+  }
+
   /** Implement autocorrect when enabled in the settings. */
   void handle_space_bar()
   {
+    if (try_expand_macro(" "))
+      return;
     if (_config.space_bar_auto_complete && _suggestions.count > 0
         && !_typedword.is_selection_not_empty()
         && _typedword.cursor_relative() == 0

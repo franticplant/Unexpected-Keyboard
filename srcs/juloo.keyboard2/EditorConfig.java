@@ -40,12 +40,19 @@ public final class EditorConfig
   // Doesn't override [_config.suggestions_enabled].
   public boolean should_show_candidates_view;
 
+  /** Package name of the editor. Empty when unknown. */
+  public String package_name = "";
+  /** Whether snippets may inspect and replace text before the cursor. */
+  public boolean snippets_enabled = true;
+
   public EditorConfig() {}
 
   public void refresh(EditorInfo info, Resources res)
   {
     int inputType = info.inputType & InputType.TYPE_MASK_CLASS;
     int options = info.imeOptions;
+    package_name = info.packageName == null ? "" : info.packageName;
+    snippets_enabled = !is_password_field(info.inputType);
     /* Selection mode.
        Editors with [TYPE_NULL] are for example Termux and Emacs. */
     selection_mode_enabled = inputType != InputType.TYPE_NULL;
@@ -121,9 +128,21 @@ public final class EditorConfig
     return res.getString(id);
   }
 
-  boolean _should_move_cursor_force_fallback(EditorInfo info)
+  static boolean is_password_field(int input_type)
   {
-    // This catch Acode: which sets several variations at once.
+    int cls = input_type & InputType.TYPE_MASK_CLASS;
+    int variation = input_type & InputType.TYPE_MASK_VARIATION;
+    if (cls == InputType.TYPE_CLASS_TEXT)
+      return variation == InputType.TYPE_TEXT_VARIATION_PASSWORD
+        || variation == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        || variation == InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD;
+    if (cls == InputType.TYPE_CLASS_NUMBER)
+      return variation == InputType.TYPE_NUMBER_VARIATION_PASSWORD;
+    return false;
+  }
+
+  boolean _should_move_cursor_force_fallback(EditorInfo info)
+  {    // This catch Acode: which sets several variations at once.
     if ((info.inputType & InputType.TYPE_MASK_VARIATION &
           InputType.TYPE_TEXT_VARIATION_PASSWORD) != 0)
       return true;

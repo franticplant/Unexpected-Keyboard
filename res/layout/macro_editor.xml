@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical"
+  android:padding="12dp">
+
+  <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/macro_editor_hint"
+    android:textSize="13sp"
+    android:paddingBottom="8dp"/>
+
+  <EditText
+    android:id="@+id/macro_editor_text"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:gravity="top|start"
+    android:inputType="textMultiLine|textNoSuggestions"
+    android:fontFamily="monospace"
+    android:textSize="12sp"
+    android:scrollbars="vertical"
+    android:background="@android:drawable/edit_text"
+    android:padding="8dp"/>
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="8dp">
+
+    <Button
+      android:id="@+id/macro_editor_save"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:text="@string/macro_editor_save"/>
+
+    <Button
+      android:id="@+id/macro_editor_example"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:text="@string/macro_editor_example"/>
+
+    <Button
+      android:id="@+id/macro_editor_reset"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:text="@string/macro_editor_reset"/>
+  </LinearLayout>
+</LinearLayout>

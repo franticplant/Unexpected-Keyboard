@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "snippets": [
+    {
+      "name": "date",
+      "trigger": ";date",
+      "text": "{date}",
+      "enabled": true
+    },
+    {
+      "name": "datetime",
+      "trigger": ";now",
+      "text": "{datetime}",
+      "enabled": true
+    },
+    {
+      "name": "signature",
+      "trigger": ";sig",
+      "text": "Best,\nEnes",
+      "apps": ["com.whatsapp", "org.telegram.*", "com.google.android.gm"],
+      "enabled": true
+    },
+    {
+      "name": "clipboard",
+      "trigger": ";clip",
+      "text": "{clipboard}",
+      "enabled": true
+    },
+    {
+      "name": "termux-path",
+      "trigger": ";proj",
+      "text": "/data/data/com.termux/files/home/projects/",
+      "apps": ["com.termux"],
+      "enabled": true
+    }
+  ],
+  "macros": [
+    {
+      "name": "select_all",
+      "trigger": ";selall",
+      "keys": "ctrl,a",
+      "enabled": true
+    },
+    {
+      "name": "copy",
+      "trigger": ";copy",
+      "keys": "ctrl,c",
+      "enabled": true
+    },
+    {
+      "name": "paste",
+      "trigger": ";paste",
+      "keys": "ctrl,v",
+      "enabled": true
+    }
+  ]
+}
