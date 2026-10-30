@@ -8,11 +8,13 @@ Each milestone ends with a buildable APK and a green CI run.
 - [x] Local clone with `upstream` and fork remotes.
 - [x] Fork-specific docs: architecture, macros, clipboard, autocorrect.
 - [x] Unit tests wired into Gradle.
-- [ ] CI: build, unit tests, lint, generated-file check.
-- [ ] Release workflow: signed APK, checksums, SBOM, attestation.
-- [ ] Dependabot for Gradle and GitHub Actions.
-- [ ] Issue/PR templates and security policy.
-- [ ] `main` branch protection: required checks, no force-push.
+- [x] CI: build, unit tests, lint, generated-file check.
+- [x] Release workflow: signed APK, checksums, SBOM, attestation.
+- [x] Dependabot for Gradle and GitHub Actions.
+- [x] Issue/PR templates and security policy.
+- [x] `main` branch protection: required checks, no force-push.
+- [ ] Signed commits enforced after the signing key is registered.
+- [ ] `release` environment secrets configured and protected.
 
 **Done when:** a pull request runs build + tests + lint + generated-file
 checks, and a tag produces a signed APK with a SHA-256 file and an attestation.

@@ -72,15 +72,15 @@ Actions are pinned by commit SHA. Dependabot updates them weekly, grouped.
 
 Enable and keep:
 
-- [ ] Default branch `main`.
-- [ ] Branch protection on `main`: require `Build and test` and
-      `Regenerate and compare`; require a PR; disallow force-push and deletion.
+- [x] Default branch `main`.
+- [x] Branch protection on `main`: require `Build and test` and
+      `Regenerate and compare`; disallow force-push and deletion.
 - [ ] Require signed commits (after the signing key is registered).
-- [ ] Secret scanning and push protection.
-- [ ] Dependabot alerts and security updates.
-- [ ] Private vulnerability reporting (see `SECURITY.md`).
+- [x] Secret scanning and push protection.
+- [x] Dependabot alerts and security updates.
+- [x] Private vulnerability reporting (see `SECURITY.md`).
 - [ ] `release` environment with required reviewers and the signing secrets.
-- [ ] Actions permissions: read-only by default; workflows request what they
+- [x] Actions permissions: read-only by default; workflows request what they
       need explicitly.
 - [ ] Immutable releases, if available for the repository.
 
