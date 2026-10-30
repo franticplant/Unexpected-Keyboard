@@ -1,13 +1,28 @@
 # Contributing
 
-Thanks for contributing :)
+## Fork workflow
+
+This repository is a fork. Read [docs/REPO.md](docs/REPO.md) for the branch
+model, commit style, CI expectations, signing and repository settings.
+
+Before opening a PR:
+
+```sh
+./gradlew testDebugUnitTest
+./gradlew lintDebug
+./gradlew assembleDebug
+```
+
+Fork-specific changes belong here; upstream keyboard fixes should be sent to
+[Julow/Unexpected-Keyboard](https://github.com/Julow/Unexpected-Keyboard).
 
 ## Building the app
 
 The application uses Gradle and can be used with Android Studio, but using
 Android Studio is not required. The build dependencies are:
-- OpenJDK 17
+- OpenJDK 21 (the CI uses Temurin 21; source/target remains Java 8)
 - Android SDK: build tools, platform `36`
+- Android NDK `27.0.12077973`
 
 Python 3 is required to update generated files but not to build the app.
 
