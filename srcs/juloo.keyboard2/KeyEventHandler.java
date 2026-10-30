@@ -14,6 +14,7 @@ import juloo.keyboard2.clipboard.ClipEntry;
 import juloo.keyboard2.clipboard.ClipboardPaster;
 import juloo.keyboard2.macros.MacroEntry;
 import juloo.keyboard2.macros.MacroStore;
+import juloo.keyboard2.personal.PersonalModel;
 import juloo.keyboard2.suggestions.Suggestions;
 
 public final class KeyEventHandler
@@ -61,6 +62,9 @@ public final class KeyEventHandler
     _autocap.started(_config, ic);
     _typedword.started(_config, ic);
     _suggestions.started();
+    PersonalModel model = PersonalModel.get();
+    if (model != null)
+      model.reset_context();
     _move_cursor_force_fallback =
       _config.editor_config.should_move_cursor_force_fallback;
     _last_action = null;
@@ -71,6 +75,9 @@ public final class KeyEventHandler
   {
     _autocap.selection_updated(oldSelStart, newSelStart);
     _typedword.selection_updated(oldSelStart, newSelStart, newSelEnd);
+    PersonalModel model = PersonalModel.get();
+    if (model != null)
+      model.reset_current();
   }
 
   /** A key is being pressed. There will not necessarily be a corresponding
@@ -150,6 +157,7 @@ public final class KeyEventHandler
 
   public void suggestion_entered(String text, boolean add_space_after)
   {
+    String target = text;
     if (add_space_after)
       text = text + " ";
     String old = _typedword.get();
@@ -157,6 +165,11 @@ public final class KeyEventHandler
     replace_surrounding_text(old.length() + cur_rel, -cur_rel, text);
     last_replaced_word = old;
     last_replacement_word_len = text.length();
+    last_correction_target = target;
+    PersonalModel model = PersonalModel.get();
+    if (model != null && _config.personal_autocorrect
+        && _config.editor_config.snippets_enabled)
+      model.accepted(old, target);
     _next_last_action = LastAction.SUGGESTION_ENTERED;
   }
 
@@ -167,7 +180,7 @@ public final class KeyEventHandler
       return;
     if (entry.is_text())
     {
-      send_text(entry.text);
+      send_text(entry.text, false);
       return;
     }
     InputConnection conn = _recv.getCurrentInputConnection();
@@ -277,9 +290,23 @@ public final class KeyEventHandler
       _autocap.event_sent(eventCode, metaState);
       _typedword.event_sent(eventCode, metaState);
     }
+    if (eventAction == KeyEvent.ACTION_DOWN
+        && (eventCode == KeyEvent.KEYCODE_ENTER
+          || eventCode == KeyEvent.KEYCODE_TAB))
+    {
+      PersonalModel model = PersonalModel.get();
+      if (model != null && _config.personal_autocorrect
+          && _config.editor_config.snippets_enabled)
+        model.commit_current();
+    }
   }
 
   void send_text(String text)
+  {
+    send_text(text, true);
+  }
+
+  void send_text(String text, boolean learn)
   {
     InputConnection conn = _recv.getCurrentInputConnection();
     if (conn == null)
@@ -287,6 +314,10 @@ public final class KeyEventHandler
     _autocap.typed(text);
     _typedword.typed(text);
     conn.commitText(text, 1);
+    PersonalModel model = PersonalModel.get();
+    if (learn && model != null && _config.personal_autocorrect
+        && _config.editor_config.snippets_enabled)
+      model.observe_committed_text(text);
   }
 
   void replace_surrounding_text(int remove_before, int remove_after,
@@ -568,6 +599,8 @@ public final class KeyEventHandler
       enter a suggestion (with the space bar or the candidates view) or [null]
       otherwise. */
   String last_replaced_word = null;
+  /** The correction that replaced [last_replaced_word]. */
+  String last_correction_target = null;
   /** Length of the text before the cursor that should be replaced by
       backspace. */
   int last_replacement_word_len = 0;
@@ -643,12 +676,23 @@ public final class KeyEventHandler
     if (_last_action == LastAction.SUGGESTION_ENTERED
         && last_replaced_word != null)
     {
-      replace_surrounding_text(last_replacement_word_len, 0, last_replaced_word + " ");
+      PersonalModel model = PersonalModel.get();
+      if (model != null && _config.personal_autocorrect
+          && _config.editor_config.snippets_enabled
+          && last_correction_target != null)
+        model.rejected(last_replaced_word, last_correction_target);
+      replace_surrounding_text(last_replacement_word_len, 0,
+          last_replaced_word + " ");
       last_replaced_word = null;
+      last_correction_target = null;
       _next_last_action = LastAction.SUGGESTION_UNDO;
     }
     else
     {
+      PersonalModel model = PersonalModel.get();
+      if (model != null && _config.personal_autocorrect
+          && _config.editor_config.snippets_enabled)
+        model.backspace();
       send_key_down_up(KeyEvent.KEYCODE_DEL);
     }
   }

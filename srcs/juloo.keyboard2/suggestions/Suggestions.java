@@ -7,6 +7,7 @@ import juloo.keyboard2.dict.Dictionaries;
 import juloo.keyboard2.Config;
 import juloo.keyboard2.ComposeKey;
 import juloo.keyboard2.ComposeKeyData;
+import juloo.keyboard2.personal.PersonalModel;
 
 /** Keep track of the word being typed and provide suggestions for
     [CandidatesView]. */
@@ -75,6 +76,14 @@ public final class Suggestions
         suggestions[i++] = dict.word(suffixes[j]);
       if (dist.length > j && i < MAX_COUNT)
         suggestions[i++] = dict.word(dist[j]);
+    }
+    if (first_char_upper)
+      capitalize_results(suggestions, i);
+    if (_config.personal_autocorrect && _config.editor_config.snippets_enabled)
+    {
+      PersonalModel model = PersonalModel.get();
+      if (model != null)
+        i = model.rerank(word, suggestions, i);
     }
     if (first_char_upper)
       capitalize_results(suggestions, i);

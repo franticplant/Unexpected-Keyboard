@@ -133,6 +133,7 @@ public class Keyboard2 extends InputMethodService
   {
     super.onCreate();
     juloo.keyboard2.macros.MacroStore.init(this);
+    juloo.keyboard2.personal.PersonalModel.init(this);
     SharedPreferences prefs = DirectBootAwarePreferences.get_shared_preferences(this);
     _handler = new Handler(getMainLooper());
     _foldStateTracker = new FoldStateTracker(this);
@@ -156,7 +157,10 @@ public class Keyboard2 extends InputMethodService
   @Override
   public void onDestroy() {
     super.onDestroy();
-
+    juloo.keyboard2.personal.PersonalModel model =
+      juloo.keyboard2.personal.PersonalModel.get();
+    if (model != null)
+      model.flush();
     _foldStateTracker.close();
   }
 

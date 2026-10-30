@@ -197,6 +197,8 @@
     <string name="pref_category_custom">Custom</string>
     <string name="pref_macros_title">Macros &amp; snippets</string>
     <string name="pref_macros_summary">Text expansion, named key macros and per-app profiles</string>
+    <string name="pref_personal_autocorrect_title">Learn my typing</string>
+    <string name="pref_personal_autocorrect_summary">Rerank suggestions from the words and corrections you use. Stored locally; disabled in password fields.</string>
     <string name="macro_editor_hint">Edit macros.json. Snippets expand when you type the trigger followed by space, enter or tab. Use {date}, {time}, {datetime}, {clipboard}, {app}, {newline} or {tab} in text. Restrict an entry with \"apps\": [\"com.whatsapp\", \"org.telegram.*\"].</string>
     <string name="macro_editor_save">Save</string>
     <string name="macro_editor_example">Example</string>
