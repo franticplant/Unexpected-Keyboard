@@ -15,13 +15,19 @@ dependencies {
 android {
   namespace = "juloo.keyboard2"
   compileSdkVersion = "android-36"
+  ndkVersion = "27.0.12077973"
+
+  val forkVersionName = (project.findProperty("forkVersionName") as String?)
+    ?: "2.1.0-fork.1"
+  val forkVersionCode = ((project.findProperty("forkVersionCode") as String?)
+    ?: "2010001").toInt()
 
   defaultConfig {
     applicationId = "juloo.keyboard2"
     minSdk = 21
     targetSdk { version = release(36) }
-    versionCode = 56
-    versionName = "2.1.0"
+    versionCode = forkVersionCode
+    versionName = forkVersionName
   }
 
   sourceSets {
@@ -92,6 +98,19 @@ android {
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+  }
+
+  lint {
+    // Upstream maintains translations; this fork only guarantees English for
+    // new strings. Missing translations are therefore not a build failure.
+    disable += "MissingTranslation"
+    // Lint does not resolve classes from the non-standard `srcs/` source dirs
+    // used by this project, so every manifest/layout class looks missing.
+    disable += "MissingClass"
+    // Freeze the remaining upstream issues; new code must not add more.
+    baseline = file("lint-baseline.xml")
+    abortOnError = true
+    checkReleaseBuilds = true
   }
 }
 
