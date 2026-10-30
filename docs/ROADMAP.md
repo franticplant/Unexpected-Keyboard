@@ -37,19 +37,21 @@ delimiter, and undo/disable it without editing code.
 
 ## M2 — Clipboard overhaul
 
-- [ ] `ClipEntry`/`ClipboardStore` with persistent index.
-- [ ] Text history with search, pin, delete, clear.
-- [ ] Image capture, file storage, thumbnails, dimensions/size.
-- [ ] `FileProvider` + `commitContent` image paste.
-- [ ] Clipboard + paste fallback and share fallback.
-- [ ] RecyclerView UI with tabs and image rows.
-- [ ] Migration from the old pinned-text preference.
-- [ ] Backup exclusion and privacy tests.
+- [x] `ClipEntry`/`ClipboardStore` with in-memory history and pinned JSON.
+- [x] Text history with filters, pin, delete, clear (free-text search pending).
+- [x] Image capture into cache (unpinned) or files (pinned), thumbnails, dimensions/size.
+- [x] `FileProvider` + `commitContent` image paste.
+- [x] Clipboard + paste fallback and share action.
+- [x] List UI with All/Text/Images/Pinned filters and image rows.
+- [x] Migration from the old pinned-text preference.
+- [x] Backup exclusion and password-field capture exclusion.
+- [ ] Free-text search and image preview dialog.
 - [ ] Manual matrix on WhatsApp, Telegram, Signal, Gmail, Chrome, Termux.
 
 **Done when:** copying an image in Photos and tapping it in the keyboard pastes
 it into at least one major chat app via `commitContent`, and the fallback is
-clear when an app does not support it.
+clear when an app does not support it. The code path exists; it still needs the
+device matrix.
 
 ## M3 — Personal autocorrect
 

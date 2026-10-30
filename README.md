@@ -42,16 +42,22 @@ Type a trigger, followed by space, enter or tab:
 - In-app editor under **Settings → Macros & snippets**.
 - Full schema and examples: [docs/MACROS.md](docs/MACROS.md).
 
-### Clipboard (in progress)
+### Clipboard
 
-The design replaces the six-item text-only list with:
+Implemented:
 
-- Persistent text and image history.
+- In-memory text and image history; **only pinned items persist**.
+- Unpinned images live in the IME cache and are cleared on process start.
 - Thumbnails, dimensions, size and age.
-- Search, pin, delete, clear-all.
+- Filters: All, Text, Images, Pinned; pin/unpin, delete, clear history, clear
+  pinned.
 - Image paste through `InputConnection.commitContent`, with a clipboard +
-  paste-key fallback and a share-sheet fallback.
-- Storage limits, deduplication and backup exclusion.
+  paste-key fallback and a share action.
+- FileProvider, deduplication, storage limits, backup exclusion, and
+  password-field capture exclusion.
+
+Pending: free-text search, image preview dialog, per-limit settings, and the
+manual app matrix.
 
 See [docs/CLIPBOARD.md](docs/CLIPBOARD.md).
 

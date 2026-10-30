@@ -30,7 +30,12 @@ srcs/juloo.keyboard2/
     MacroMatcher.java        longest-trigger lookup
     MacroStore.java          JSON load/save, variables, singleton
     MacroEditorActivity.java in-app JSON editor
-  clipboard/                 (planned, see docs/CLIPBOARD.md)
+  clipboard/
+    ClipEntry.java           text/image entry model
+    ClipboardStore.java      memory/pinned split, image capture, persistence
+    ClipboardPaster.java     commitContent + clipboard/paste fallback
+    ClipboardPaneController.java  filters, list, row actions, thumbnails
+    ClipboardUtils.java      pure formatting helpers
   personal/                  (planned, see docs/AUTOCORRECT.md)
 ```
 
@@ -59,8 +64,9 @@ Design rules:
 ```text
 ClipboardManager listener
   -> ClipboardStore.ingest(ClipData)  [background executor]
-       -> text: index.json
-       -> image: copy bytes, thumbnail, index.json
+       -> text: memory; pinned.json when pinned
+       -> image: cache bytes if unpinned, files/ if pinned
+       -> thumbnail, index metadata
   -> notify RecyclerView adapter
 
 paste tap

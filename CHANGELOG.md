@@ -13,6 +13,13 @@ the upstream base plus `-fork.N` (see [docs/RELEASING.md](docs/RELEASING.md)).
 - In-app `macros.json` editor with validation, examples and reset.
 - Per-app exclusion of snippets in password fields.
 - Unit tests for trigger matching and package patterns.
+- Clipboard v2: in-memory text/image history, pinned persistence, image
+  capture and thumbnails, filters, pin/delete/clear actions.
+- Image paste through `InputConnection.commitContent`, with clipboard + paste
+  and share fallbacks.
+- FileProvider for clipboard content, backup exclusion, password-field capture
+  exclusion, migration from the old pinned-text preference.
+- Clipboard store and formatting unit tests.
 - Architecture, macro, clipboard, autocorrect, repository and release docs.
 - CI: unit tests, lint baseline, debug APK, generated-file check, signed dev APK.
 - Release workflow: signed APK, checksums, SPDX SBOM, Sigstore attestations.
@@ -21,6 +28,8 @@ the upstream base plus `-fork.N` (see [docs/RELEASING.md](docs/RELEASING.md)).
 
 - Build now pins the NDK and derives the fork version from Gradle properties.
 - Fork version starts at `2.1.0-fork.1` (`versionCode` 2010001).
+- The clipboard pane replaces the two-list text-only UI with filters, image
+  rows and row actions.
 
 ### Fixed
 

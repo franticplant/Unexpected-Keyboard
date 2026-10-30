@@ -2,8 +2,8 @@
 
 The upstream clipboard pane is a text-only, in-memory list of six strings plus
 a separately persisted list of pinned strings. This fork replaces it with a
-real clipboard store that handles text and images, survives restarts, and can
-paste rich content into editors that accept it.
+real clipboard store that handles text and images, **keeps pinned items across
+restarts, and treats everything unpinned as ephemeral**.
 
 ## Goals
 
@@ -11,7 +11,9 @@ paste rich content into editors that accept it.
 - Preview images with thumbnails; show dimensions, size and age.
 - Paste images into chat/editor apps through `InputConnection.commitContent`
   where supported, with an explicit fallback where it is not.
-- Persistent, searchable history with pinning, deletion and a clear-all action.
+- Searchable in-memory history with pinning, deletion and a clear-all action.
+- **Pinned items persist. Unpinned history is memory-only (text) or cache-only
+  (images) and is gone when the IME process dies.**
 - Per-entry actions: paste, copy, pin/unpin, share, delete.
 - Privacy defaults: password fields excluded, size/TTL limits, no backup of
   clipboard files, no content in logs.
@@ -71,21 +73,29 @@ the store drops exact duplicates.
 
 ```text
 files/clipboard/
-  index.json                 # metadata, atomic replace
-  images/<id>.<ext>          # original bytes
-  thumbs/<id>.jpg            # <= 256 px longest edge, quality 80
+  pinned.json                # pinned metadata, atomic replace
+  images/<id>.<ext>          # pinned images only
+  thumbs/<id>.jpg            # pinned thumbnails only
+cacheDir/clipboard/
+  images/<id>.<ext>          # unpinned images, cleared on startup
+  thumbs/<id>.jpg            # unpinned thumbnails, cleared on startup
 ```
 
-- `index.json` is written to a temp file and renamed into place.
-- Text is stored in the index; images are stored as files.
+- `pinned.json` is written to a temp file and renamed into place.
+- Unpinned text lives only in memory.
+- Unpinned images are copied to `cacheDir` so `commitContent` has a stable
+  file; the cache is cleared when the store starts and the OS may evict it.
+- Pinned text and image metadata live in `pinned.json`; pinned image bytes live
+  in `files/`.
 - Limits (defaults, configurable later):
-  - 100 history entries.
-  - 50 images.
+  - 50 unpinned history entries (text + images).
+  - 100 pinned entries.
   - 20 MiB per image.
-  - 200 MiB total clipboard storage.
+  - 200 MiB total clipboard storage (pinned bytes + unpinned cache).
   - TTL from the existing preference; pinned entries never expire.
-- Eviction is LRU among non-pinned entries. Images are evicted before text when
-  the count/size pressure is on images.
+- Eviction is LRU among unpinned entries. Pinned entries are only removed by
+  the user. Images are evicted before text when the count/size pressure is on
+  images.
 - `android:allowBackup` must not include `files/clipboard`. Use
   `dataExtractionRules`/`fullBackupContent` to exclude it, or disable backup for
   the app.
@@ -181,46 +191,72 @@ Do not silently insert a placeholder string such as `[image]`.
   rather than promising a paste.
 - Never copy an external URI without first copying the bytes into our store.
 
+## Implementation status
+
+Implemented in this fork:
+
+- `ClipEntry` + `ClipboardStore` with the memory/pinned split.
+- Text capture, dedupe, filters, pin/unpin, delete, clear history, clear pinned.
+- Image capture into cache (unpinned) or `files/` (pinned), thumbnails, bounds,
+  size, dedupe.
+- `FileProvider` + `commitContent` image paste, clipboard + paste-key fallback,
+  and a share action.
+- Password-field capture exclusion, backup exclusion, limits and migration from
+  the old pinned-text preference.
+- JVM tests for the store and formatting helpers.
+
+Still pending:
+
+- Free-text search.
+- Image preview dialog.
+- Settings for limits and per-app capture exclusions.
+- Manual device matrix (the local emulator crashes in this environment before
+  boot, so this still needs a physical Pixel 8 run).
+
 ## UI
 
-Replace the two-list `ScrollView` with a single list/grid:
+The two-list `ScrollView` is replaced by one `ListView` under a history toggle
+and a filter bar:
 
 ```text
 +--------------------------------------------------+
-| [ All ] [ Text ] [ Images ] [ Pinned ]   Search  |
+| [x] Clipboard history                  [Clear]    |
+| [ All ] [ Text ] [ Images ] [ Pinned ]           |
 +--------------------------------------------------+
-| [thumb] Screenshot 2026-10-30 22:41   2.1 MB  ⋮  |
-|        1080 x 2400                               |
+| [thumb] Screenshot 2026-10-30 22:41   2.1 MB  📌 🗑 |
+|        1080 x 2400 · 2.1 MiB · 3m ago            |
 +--------------------------------------------------+
-| "the quick brown fox..."              12:04   ⋮  |
+| "the quick brown fox..."              12:04   📌 🗑 |
 +--------------------------------------------------+
-| [thumb] pasted image                  11:58   ⋮  |
+| [thumb] pasted image                  11:58   📌 🗑 |
 +--------------------------------------------------+
 |                     [keyboard bottom row]        |
 +--------------------------------------------------+
 ```
 
-- Tabs filter by kind/pinned. Search filters text and image labels.
-- Tap = paste. Long-press = preview (images) or action menu.
-- Overflow menu: Copy, Pin/Unpin, Share, Delete.
-- Swipe-to-delete is optional; a menu action is more discoverable in an IME.
-- Empty states explain how to copy something.
-- Use `RecyclerView` with a stable id per entry and a diff callback. Add
-  `androidx.recyclerview:recyclerview` to dependencies.
+- Filters are `All`, `Text`, `Images`, `Pinned`. Pinned entries sort first.
+- Tap = paste. Long-press = Copy, Pin/Unpin, Share, Delete.
+- Row buttons pin/unpin and delete; the delete action asks for confirmation.
+- `Clear` offers "Clear history" (unpinned) and "Clear pinned".
+- Empty states explain when history is off or there is nothing pinned.
 - Image thumbnails load on a background executor with an LRU bitmap cache.
 - The bottom row keeps the existing `clipboard_bottom_row.xml` keyboard.
+- Free-text search is deferred until it can be tested inside the IME window;
+  an `EditText` in the input view is a focus/recursion risk that needs a device.
 
 ## Privacy and security
 
-- Exclude clipboard files from Android backup.
+- Exclude `files/clipboard` from Android backup.
+- Unpinned history is deliberately ephemeral: it is not written to `files/`
+  and does not survive the IME process.
 - Do not log entry contents. Log only ids, kinds and sizes at debug level.
 - Disable capture in password fields and in apps explicitly excluded by the
   user (future per-app setting).
-- A "Clear clipboard history" action also clears the system clipboard when the
-  current clip came from our store.
+- A "Clear clipboard history" action clears the unpinned list and cache. A
+  separate "Clear pinned" action is required for pinned items.
 - Pinned images remain until deleted; make that explicit in the UI.
 - The content provider is not exported and only serves files under the
-  clipboard directory, by id. It must reject path traversal.
+  clipboard directories, by id. It must reject path traversal.
 
 ## Migration
 
@@ -228,7 +264,7 @@ On first run of the new store:
 
 1. Read the old `pinned_clipboards` SharedPreferences JSON array.
 2. Create TEXT entries with `pinned = true`, preserving order where possible.
-3. Write the new index, then remove the old preference key.
+3. Write `files/clipboard/pinned.json`, then remove the old preference key.
 4. Old in-memory history is not recoverable; start empty.
 
 Keep the old preference untouched for one release so a downgrade does not lose
@@ -236,13 +272,14 @@ pinned text.
 
 ## Implementation phases
 
-1. **Store + capture**: `ClipEntry`, `ClipboardStore` (text only), persistent
-   index, migration from pinned prefs, unit tests.
-2. **Images**: image capture, file storage, thumbnails, bounds/size, dedupe.
-3. **Paste**: FileProvider, `commitContent`, MIME negotiation, fallback toast.
-4. **UI**: RecyclerView, tabs, search, image rows, menus, preview dialog.
-5. **Polish**: settings for limits/TTL, backup exclusion, clear-all, metrics
-   (counts only, no content), manual test matrix.
+1. **Store + capture** — done: `ClipEntry`, `ClipboardStore` text history,
+   pinned JSON, migration, unit tests.
+2. **Images** — done: cache/files split, thumbnails, bounds/size, dedupe.
+3. **Paste** — done: FileProvider, `commitContent`, fallback.
+4. **UI** — done for filters, rows, pin/delete/clear, thumbnails; search and
+   preview dialog pending.
+5. **Polish** — backup exclusion and password-field exclusion done; settings
+   for limits/TTL, metrics and the manual matrix pending.
 
 ## Test matrix
 
@@ -261,5 +298,5 @@ pinned text.
 | Password field | disabled | disabled | disabled | privacy |
 
 Also test: copy image from Photos, Chrome, Files; rotate the device; kill the
-IME process; low storage; 20 MiB image; GIF; screenshot; clear history; pin and
-rebuild the process.
+IME process (unpinned history must be gone, pinned must survive); low storage;
+20 MiB image; GIF; screenshot; clear history; pin and rebuild the process.
