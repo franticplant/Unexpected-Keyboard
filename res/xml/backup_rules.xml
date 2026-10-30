@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+  <exclude domain="file" path="clipboard/"/>
+  <exclude domain="file" path="personal/"/>
+  <exclude domain="sharedpref" path="pinned_clipboards.xml"/>
+</full-backup-content>

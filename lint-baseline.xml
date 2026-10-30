@@ -91,67 +91,12 @@
 
     <issue
         id="NewApi"
-        message="`android:layout_marginHorizontal` requires API level 26 (current min is 21)"
-        errorLine1="    &lt;item name=&quot;android:layout_marginHorizontal&quot;>14dp&lt;/item>"
-        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="res/values/styles.xml"
-            line="75"
-            column="11"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="`android:layout_marginVertical` requires API level 26 (current min is 21)"
-        errorLine1="    &lt;item name=&quot;android:layout_marginVertical&quot;>14dp&lt;/item>"
-        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="res/values/styles.xml"
-            line="76"
-            column="11"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="`android:layout_marginHorizontal` requires API level 26 (current min is 21)"
-        errorLine1="    &lt;item name=&quot;android:layout_marginHorizontal&quot;>6dp&lt;/item>"
-        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="res/values/styles.xml"
-            line="81"
-            column="11"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="`android:fontWeight` requires API level 26 (current min is 21)"
-        errorLine1="    &lt;item name=&quot;android:fontWeight&quot;>700&lt;/item>"
-        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="res/values/styles.xml"
-            line="85"
-            column="11"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="`android:layout_marginHorizontal` requires API level 26 (current min is 21)"
-        errorLine1="    &lt;item name=&quot;android:layout_marginHorizontal&quot;>2dp&lt;/item>"
-        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="res/values/styles.xml"
-            line="98"
-            column="11"/>
-    </issue>
-
-    <issue
-        id="NewApi"
         message="`android:layout_marginVertical` requires API level 26 (current min is 21)"
         errorLine1="    &lt;item name=&quot;android:layout_marginVertical&quot;>8dp&lt;/item>"
         errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="res/values/styles.xml"
-            line="106"
+            line="74"
             column="11"/>
     </issue>
 
@@ -162,7 +107,7 @@
         errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="res/values/styles.xml"
-            line="107"
+            line="75"
             column="11"/>
     </issue>
 
@@ -173,7 +118,7 @@
         errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="res/values/styles.xml"
-            line="119"
+            line="87"
             column="11"/>
     </issue>
 
@@ -184,7 +129,7 @@
         errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="res/values/styles.xml"
-            line="129"
+            line="97"
             column="11"/>
     </issue>
 
@@ -195,7 +140,7 @@
         errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="res/values/styles.xml"
-            line="137"
+            line="105"
             column="11"/>
     </issue>
 
@@ -206,7 +151,7 @@
         errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="res/values/styles.xml"
-            line="144"
+            line="112"
             column="11"/>
     </issue>
 
@@ -217,7 +162,7 @@
         errorLine2="                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="res/values/styles.xml"
-            line="165"
+            line="133"
             column="26"/>
     </issue>
 
@@ -1841,33 +1786,11 @@
     <issue
         id="SpUsage"
         message="Should use &quot;`sp`&quot; instead of &quot;`dp`&quot; for text sizes"
-        errorLine1="    &lt;item name=&quot;android:textSize&quot;>16dp&lt;/item>"
-        errorLine2="                                  ~~~~">
-        <location
-            file="res/values/styles.xml"
-            line="77"
-            column="35"/>
-    </issue>
-
-    <issue
-        id="SpUsage"
-        message="Should use &quot;`sp`&quot; instead of &quot;`dp`&quot; for text sizes"
-        errorLine1="    &lt;item name=&quot;android:textSize&quot;>14dp&lt;/item>"
-        errorLine2="                                  ~~~~">
-        <location
-            file="res/values/styles.xml"
-            line="84"
-            column="35"/>
-    </issue>
-
-    <issue
-        id="SpUsage"
-        message="Should use &quot;`sp`&quot; instead of &quot;`dp`&quot; for text sizes"
         errorLine1="    &lt;item name=&quot;android:textSize&quot;>18dp&lt;/item>"
         errorLine2="                                  ~~~~">
         <location
             file="res/values/styles.xml"
-            line="123"
+            line="91"
             column="35"/>
     </issue>
 
@@ -1913,17 +1836,6 @@
             file="srcs/juloo.keyboard2/Keyboard2View.java"
             line="275"
             column="11"/>
-    </issue>
-
-    <issue
-        id="ObsoleteSdkInt"
-        message="Unnecessary; `SDK_INT` is never &lt; 21"
-        errorLine1="    if (VERSION.SDK_INT &lt;= 11)"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="srcs/juloo.keyboard2/ClipboardHistoryService.java"
-            line="25"
-            column="9"/>
     </issue>
 
     <issue
@@ -1990,28 +1902,6 @@
             file="res/layout/launcher_activity.xml"
             line="16"
             column="6"/>
-    </issue>
-
-    <issue
-        id="Overdraw"
-        message="Possible overdraw: Root element paints background `?attr/colorKeyboard` with a theme that also paints a background (inferred theme is `@android:style/Theme.Holo`)"
-        errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot; android:orientation=&quot;vertical&quot; android:background=&quot;?attr/colorKeyboard&quot; android:hardwareAccelerated=&quot;false&quot;>"
-        errorLine2="                                                                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="res/layout/clipboard_pane.xml"
-            line="2"
-            column="105"/>
-    </issue>
-
-    <issue
-        id="Overdraw"
-        message="Possible overdraw: Root element paints background `?attr/colorKeyboard` with a theme that also paints a background (inferred theme is `@android:style/Theme.Holo`)"
-        errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot; android:hardwareAccelerated=&quot;false&quot; android:orientation=&quot;vertical&quot; android:background=&quot;?attr/colorKeyboard&quot;>"
-        errorLine2="                                                                                                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="res/layout/keyboard.xml"
-            line="2"
-            column="141"/>
     </issue>
 
     <issue

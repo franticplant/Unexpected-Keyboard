@@ -44,6 +44,8 @@ public final class EditorConfig
   public String package_name = "";
   /** Whether snippets may inspect and replace text before the cursor. */
   public boolean snippets_enabled = true;
+  /** Whether the clipboard history may capture content in this editor. */
+  public boolean clipboard_enabled = true;
 
   public EditorConfig() {}
 
@@ -53,6 +55,7 @@ public final class EditorConfig
     int options = info.imeOptions;
     package_name = info.packageName == null ? "" : info.packageName;
     snippets_enabled = !is_password_field(info.inputType);
+    clipboard_enabled = snippets_enabled;
     /* Selection mode.
        Editors with [TYPE_NULL] are for example Termux and Emacs. */
     selection_mode_enabled = inputType != InputType.TYPE_NULL;

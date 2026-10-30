@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import juloo.cdict.Cdict;
+import juloo.keyboard2.clipboard.ClipboardPaneController;
 import juloo.keyboard2.dict.Dictionaries;
 import juloo.keyboard2.dict.DictionariesActivity;
 import juloo.keyboard2.dict.DictionarySwitcher;
@@ -50,6 +51,7 @@ public class Keyboard2 extends InputMethodService
   private Dictionaries _dictionaries;
   private ViewGroup _emojiPane = null;
   private ViewGroup _clipboard_pane = null;
+  private ClipboardPaneController _clipboard_pane_controller = null;
   private Handler _handler;
 
   private Config _config;
@@ -140,7 +142,7 @@ public class Keyboard2 extends InputMethodService
     _config = Config.globalConfig();
     Receiver recvr = this.new Receiver();
     _suggestions = new Suggestions(recvr, _config);
-    _keyeventhandler = new KeyEventHandler(_config, recvr, _suggestions);
+    _keyeventhandler = new KeyEventHandler(_config, recvr, _suggestions, this);
     KeyValue.Stateful._handler = recvr;
     _config.handler = _keyeventhandler;
     prefs.registerOnSharedPreferenceChangeListener(this);
@@ -234,6 +236,7 @@ public class Keyboard2 extends InputMethodService
       create_keyboard_view();
       _emojiPane = null;
       _clipboard_pane = null;
+      _clipboard_pane_controller = null;
       setInputView(_keyboard_container_view);
     }
     // Set keyboard background opacity
@@ -454,7 +457,13 @@ public class Keyboard2 extends InputMethodService
 
         case SWITCH_CLIPBOARD:
           if (_clipboard_pane == null)
+          {
             _clipboard_pane = (ViewGroup)inflate_view(R.layout.clipboard_pane);
+            _clipboard_pane_controller =
+              new ClipboardPaneController(Keyboard2.this, _clipboard_pane);
+          }
+          else if (_clipboard_pane_controller != null)
+            _clipboard_pane_controller.refresh();
           setInputView(_clipboard_pane);
           break;
 

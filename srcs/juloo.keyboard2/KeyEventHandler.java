@@ -1,6 +1,7 @@
 package juloo.keyboard2;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.KeyCharacterMap;
@@ -9,6 +10,8 @@ import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
 import java.util.Iterator;
+import juloo.keyboard2.clipboard.ClipEntry;
+import juloo.keyboard2.clipboard.ClipboardPaster;
 import juloo.keyboard2.macros.MacroEntry;
 import juloo.keyboard2.macros.MacroStore;
 import juloo.keyboard2.suggestions.Suggestions;
@@ -20,6 +23,7 @@ public final class KeyEventHandler
 {
   Config _config;
   IReceiver _recv;
+  Context _context;
   Autocapitalisation _autocap;
   Suggestions _suggestions;
   CurrentlyTypedWord _typedword;
@@ -37,10 +41,11 @@ public final class KeyEventHandler
   LastAction _last_action = null;
   LastAction _next_last_action = null;
 
-  public KeyEventHandler(Config conf, IReceiver recv, Suggestions sg)
+  public KeyEventHandler(Config conf, IReceiver recv, Suggestions sg, Context context)
   {
     _config = conf;
     _recv = recv;
+    _context = context;
     Handler handler = recv.getHandler();
     _autocap = new Autocapitalisation(handler,
         this.new Autocapitalisation_callback());
@@ -156,9 +161,18 @@ public final class KeyEventHandler
   }
 
   @Override
-  public void paste_from_clipboard_pane(String content)
+  public void paste_from_clipboard_pane(ClipEntry entry)
   {
-    send_text(content);
+    if (entry == null)
+      return;
+    if (entry.is_text())
+    {
+      send_text(entry.text);
+      return;
+    }
+    InputConnection conn = _recv.getCurrentInputConnection();
+    if (conn != null)
+      ClipboardPaster.paste(_context, conn, entry);
   }
 
   @Override

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:minHeight="64dp"
+  android:orientation="horizontal"
+  android:gravity="center_vertical"
+  android:paddingStart="8dp"
+  android:paddingEnd="4dp"
+  android:paddingTop="4dp"
+  android:paddingBottom="4dp"
+  android:descendantFocusability="blocksDescendants"
+  android:background="?android:attr/selectableItemBackground"
+  tools:ignore="Overdraw">
+
+  <ImageView
+    android:id="@+id/clipboard_entry_thumb"
+    android:layout_width="56dp"
+    android:layout_height="56dp"
+    android:layout_marginEnd="10dp"
+    android:scaleType="centerCrop"
+    android:visibility="gone"
+    android:contentDescription="@string/clipboard_image_label"/>
+
+  <LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:orientation="vertical">
+
+    <TextView
+      android:id="@+id/clipboard_entry_title"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:maxLines="3"
+      android:ellipsize="end"
+      android:textSize="15sp"
+      android:textColor="?attr/colorLabel"/>
+
+    <TextView
+      android:id="@+id/clipboard_entry_details"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="2dp"
+      android:maxLines="1"
+      android:ellipsize="end"
+      android:textSize="11sp"
+      android:textColor="?attr/colorSubLabel"/>
+  </LinearLayout>
+
+  <ImageView
+    android:id="@+id/clipboard_entry_pin"
+    android:layout_width="36dp"
+    android:layout_height="36dp"
+    android:padding="6dp"
+    android:src="@drawable/ic_clipboard_save"
+    android:background="?android:attr/selectableItemBackgroundBorderless"
+    android:contentDescription="@string/clipboard_pin"/>
+
+  <ImageView
+    android:id="@+id/clipboard_entry_delete"
+    android:layout_width="36dp"
+    android:layout_height="36dp"
+    android:padding="6dp"
+    android:src="@drawable/ic_delete"
+    android:background="?android:attr/selectableItemBackgroundBorderless"
+    android:contentDescription="@string/clipboard_delete"/>
+</LinearLayout>

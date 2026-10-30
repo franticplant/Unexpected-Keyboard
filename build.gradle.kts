@@ -10,6 +10,8 @@ dependencies {
   implementation("androidx.window:window-java:1.4.0")
   implementation("androidx.core:core:1.16.0") // Version 1.17.0 available with sdk 36
   testImplementation("junit:junit:4.13.2")
+  // Android's org.json is a stub in JVM unit tests; use the real implementation.
+  testImplementation("org.json:json:20260814")
 }
 
 android {
