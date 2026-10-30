@@ -55,17 +55,18 @@ device matrix.
 
 ## M3 — Personal autocorrect
 
-- [ ] Previous-word tracker and observation hooks.
-- [ ] Unigram/bigram personal model with bounded storage.
-- [ ] Reranking of `cdict` candidates; personal prefix vocabulary.
-- [ ] Accepted/rejected correction map with undo handling.
+- [x] Previous-word tracking and observation hooks.
+- [x] Unigram/bigram personal model with bounded storage.
+- [x] Reranking of `cdict` candidates; personal prefix vocabulary.
+- [x] Accepted/rejected correction map with undo handling.
 - [ ] Per-app weights and opt-out.
-- [ ] Batched atomic persistence, decay, caps.
+- [x] Batched atomic persistence, decay, caps.
 - [ ] Debug metrics: acceptance rate, undo rate, ranking latency.
 - [ ] Export/delete model.
 
 **Done when:** after a week of use, the undo rate is lower than baseline and
-top-1 acceptance is higher, with no measurable typing latency regression.
+top-1 acceptance is higher, with no measurable typing latency regression. The
+model and wiring exist; this still needs real-device measurement.
 
 ## M4 — Optional micro-LLM assist
 

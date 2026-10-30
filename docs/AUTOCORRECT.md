@@ -32,6 +32,28 @@ This is **online incremental learning**, not gradient descent on the phone:
 A small neural reranker can be added later, trained offline from an exported,
 user-owned history. It is not required for the first useful version.
 
+## Implementation status
+
+Implemented in this fork:
+
+- `PersonalModel`: unigram/bigram counts, personal prefix lookup, correction
+  memory, decay and caps.
+- Candidate reranking in `Suggestions`, plus personal vocabulary candidates.
+- Accepted-correction learning and backspace-undo rejection.
+- Batched atomic persistence to `files/personal/model.json`; excluded from
+  backup.
+- Password-field exclusion and a **Learn my typing** setting.
+- JVM tests for learning, reranking, corrections, persistence and backspace.
+
+Still pending:
+
+- Per-app weights and per-app opt-out.
+- Debug metrics (acceptance, undo rate, ranking latency).
+- Export/delete model actions.
+- Real-device tuning; the local emulator crashes before boot in this
+  environment.
+- The optional micro-LLM assist.
+
 ## Model
 
 ```text

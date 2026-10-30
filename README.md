@@ -61,15 +61,17 @@ manual app matrix.
 
 See [docs/CLIPBOARD.md](docs/CLIPBOARD.md).
 
-### Personal autocorrect (in progress)
+### Personal autocorrect (v1)
 
-`cdict` remains the fast candidate generator. A personal model reranks its
-candidates and learns from accepted/rejected corrections:
+`cdict` remains the fast candidate generator. A local personal model now
+reranks its candidates and learns from accepted/rejected corrections:
 
-- Unigram/bigram counts, personal vocabulary, typo map.
-- Per-app weights, bounded storage, decay.
+- Unigram/bigram counts, personal prefix vocabulary, typo map.
+- Bounded storage with decay and caps.
+- Accepted corrections and backspace-undo rejections.
 - No LLM, no network, no disk read on the keystroke path.
-- Optional micro-LLM for explicit rewrite actions only.
+- Disabled in password fields; can be turned off with **Learn my typing**.
+- Optional micro-LLM for explicit rewrite actions is still future work.
 
 See [docs/AUTOCORRECT.md](docs/AUTOCORRECT.md).
 

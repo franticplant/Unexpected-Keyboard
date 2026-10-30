@@ -36,7 +36,8 @@ srcs/juloo.keyboard2/
     ClipboardPaster.java     commitContent + clipboard/paste fallback
     ClipboardPaneController.java  filters, list, row actions, thumbnails
     ClipboardUtils.java      pure formatting helpers
-  personal/                  (planned, see docs/AUTOCORRECT.md)
+  personal/
+    PersonalModel.java       unigram/bigram + correction model and ranking
 ```
 
 ### Macro path
@@ -59,36 +60,38 @@ Design rules:
   keeps the previous in-memory configuration rather than crashing.
 - The editor validates JSON before replacing the file.
 
-### Clipboard path (planned)
+### Clipboard path
 
 ```text
 ClipboardManager listener
-  -> ClipboardStore.ingest(ClipData)  [background executor]
+  -> ClipboardStore.ingest(ClipData)  [background executor for images]
        -> text: memory; pinned.json when pinned
        -> image: cache bytes if unpinned, files/ if pinned
        -> thumbnail, index metadata
-  -> notify RecyclerView adapter
+  -> notify ClipboardPaneController
 
 paste tap
   -> text:  InputConnection.commitText
   -> image: InputConnection.commitContent(FileProvider URI)
-             -> false/unsupported: clipboard + paste key event or share sheet
+             -> false/unsupported: clipboard + paste key event
 ```
 
 See [CLIPBOARD.md](CLIPBOARD.md) for the model, limits and test matrix.
 
-### Personal autocorrect path (planned)
+### Personal autocorrect path (v1)
 
 ```text
 currently typed word
   -> cdict candidate generation (fast, existing)
-  -> PersonalModel.rank(word, context, candidates)
-       unigram/bigram counts, typo map, per-app weights
+  -> PersonalModel.rerank(word, candidates)
+       unigram/bigram counts, personal prefix, correction confidence
   -> CandidatesView
 
 feedback
-  accepted suggestion / space autocorrect / undo / typed word
-  -> PersonalModel.observe(...)  [background, batched]
+  committed text       -> observe_committed_text
+  accepted suggestion  -> accepted(typed, target)
+  autocorrect undone   -> rejected(typed, target)
+  -> batched atomic save, decay, caps
 ```
 
 Design rules:

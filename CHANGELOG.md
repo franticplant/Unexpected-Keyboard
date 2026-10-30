@@ -20,6 +20,13 @@ the upstream base plus `-fork.N` (see [docs/RELEASING.md](docs/RELEASING.md)).
 - FileProvider for clipboard content, backup exclusion, password-field capture
   exclusion, migration from the old pinned-text preference.
 - Clipboard store and formatting unit tests.
+- Personal autocorrect v1: local unigram/bigram model, personal prefix
+  vocabulary, accepted/rejected correction memory, candidate reranking,
+  bounded atomic persistence, decay and caps.
+- **Learn my typing** setting; password-field exclusion and backup exclusion
+  for the model file.
+- Personal model unit tests for learning, reranking, corrections, persistence
+  and backspace.
 - Architecture, macro, clipboard, autocorrect, repository and release docs.
 - CI: unit tests, lint baseline, debug APK, generated-file check, signed dev APK.
 - Release workflow: signed APK, checksums, SPDX SBOM, Sigstore attestations.
