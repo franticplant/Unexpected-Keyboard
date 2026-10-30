@@ -1,0 +1,48 @@
+name: Feature request
+description: Propose a change or a new capability.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Keep the typing path fast and local. Features that need a network or an
+        LLM must be optional and must not run on every keystroke.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do that the keyboard makes hard?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should happen? Include UI sketches or JSON examples if useful.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Macros and snippets
+        - Clipboard
+        - Autocorrect / suggestions
+        - Keyboard layout or input
+        - Build, CI or release
+        - Other
+    validations:
+      required: true
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Constraints
+      options:
+        - label: This can work fully offline.
+        - label: This needs a network or a model download (explain why).
+        - label: This changes stored user data (explain migration).

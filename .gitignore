@@ -11,3 +11,8 @@
 # Directory _build is not used anymore
 /_build
 /release
+
+# Fork
+*.jks
+*.b64
+dist/

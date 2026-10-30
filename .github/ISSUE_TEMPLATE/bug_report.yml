@@ -1,0 +1,80 @@
+name: Bug report
+description: Something is broken in the fork.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Please include enough detail to reproduce the
+        problem without guessing. Do not paste passwords, private messages or
+        clipboard contents.
+  - type: input
+    id: device
+    attributes:
+      label: Device and Android version
+      placeholder: Pixel 8, Android 16 (API 36)
+    validations:
+      required: true
+  - type: input
+    id: build
+    attributes:
+      label: Build
+      description: Release tag, or the first 7 characters of the commit for a dev build.
+      placeholder: v2.1.0-fork.1 / a36ff26
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Macros and snippets
+        - Clipboard
+        - Autocorrect / suggestions
+        - Keyboard layout or input
+        - Build, CI or release
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Type ...
+        3. See ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        `adb logcat -d | grep -i juloo` is usually enough. Redact text.
+      render: text
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots or additional context
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues.
+          required: true
+        - label: I am not reporting a security vulnerability here.
+          required: true

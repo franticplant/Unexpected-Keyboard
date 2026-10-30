@@ -1,49 +1,41 @@
 name: Check generated files
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - master
+    branches: [main]
   pull_request:
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: generated-${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
-  gen-layouts:
-    name: Layout list
-    runs-on: ubuntu-latest
+  generated:
+    name: Regenerate and compare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
-    - run: python3 gen_layouts.py
-    - name: "Run 'python3 gen_layouts.py' to update the generated files."
-      run: git diff --exit-code
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-  check-layouts:
-    name: Layout warnings
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
-    - run: python3 check_layout.py
-    - name: "Fix your layout accordingly or run 'python3 check_layout.py' to promote the warnings"
-      run: git diff --exit-code
+      - name: Regenerate checked-in files
+        run: |
+          python3 gen_layouts.py
+          python3 check_layout.py
+          python3 gen_method_xml.py > res/xml/method.xml
+          python3 srcs/compose/compile.py srcs/compose/*.json srcs/compose/compose \
+            > srcs/juloo.keyboard2/ComposeKeyData.java
 
-  check-compose:
-    name: Compose key data
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
-    - run: python3 srcs/compose/compile.py srcs/compose/{*.json,compose} > srcs/juloo.keyboard2/ComposeKeyData.java
-    - name: "Run 'gradle test' to update the generated files."
-      run: git diff --exit-code
-
-  check-method:
-    name: method.xml
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout repo
-      uses: actions/checkout@v4
-    - run: python3 gen_method_xml.py > res/xml/method.xml
-    - name: "Run 'gradle test' to update the generated files."
-      run: git diff --exit-code
+      - name: Fail if regeneration changed anything
+        run: |
+          if ! git diff --exit-code; then
+            echo "::error::Generated files are stale. Run the generators and commit the result."
+            exit 1
+          fi
